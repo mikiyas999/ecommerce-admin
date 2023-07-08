@@ -9,7 +9,7 @@ import { Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Store } from "@prisma/client";
+import { Billboard, Store } from "@prisma/client";
 import {
   Form,
   FormControl,
@@ -28,28 +28,39 @@ import { ApiAlert } from "@/components/ui/api-alert";
 import { UseOrgin } from "@/hooks/use-orgin";
 
 const formSchema = z.object({
-  name: z.string().min(2),
+  label: z.string().min(1),
+  imageUrl: z.string().min(1),
 });
 
-type SettingFormValues = z.infer<typeof formSchema>;
+type BillboardFormValues = z.infer<typeof formSchema>;
 
-interface SettingFormProps {
-  intialData: Store;
+interface BillboardFormProps {
+  intialData: Billboard | null;
 }
 
-const SettingForm: React.FC<SettingFormProps> = ({ intialData }) => {
+const BillboardForm: React.FC<BillboardFormProps> = ({ intialData }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
   const orgin = UseOrgin();
 
-  const form = useForm<SettingFormValues>({
+  const title = intialData ? "Edit Billboard" : "Create Billboard";
+  const description = intialData
+    ? "Edit a new billboard"
+    : "Create a new billboard";
+  const toastMessage = intialData ? "Billboard Updated" : "Billboard Created";
+  const action = intialData ? "Save change" : "Create";
+
+  const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: intialData,
+    defaultValues: intialData || {
+      label: "",
+      imageUrl: "",
+    },
   });
 
-  const onSubmit = async (data: SettingFormValues) => {
+  const onSubmit = async (data: BillboardFormValues) => {
     try {
       setLoading(true);
       await axios.patch(`/api/stores/${params.storeId}`, data);
@@ -86,17 +97,19 @@ const SettingForm: React.FC<SettingFormProps> = ({ intialData }) => {
         onConfirm={onDelete}
       />
       <div className="flex items-center justify-between">
-        <Heading title="Store Setting" description="Manage store preferance" />
-        <Button
-          variant="destructive"
-          size="sm"
-          disabled={loading}
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
-          <Trash className="w-4 h-4 " />
-        </Button>
+        <Heading title={title} description={description} />
+        {intialData && (
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={loading}
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            <Trash className="w-4 h-4 " />
+          </Button>
+        )}
       </div>
       <Separator />
       <Form {...form}>
@@ -104,10 +117,27 @@ const SettingForm: React.FC<SettingFormProps> = ({ intialData }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 w-full"
         >
+          <FormField
+            control={form.control}
+            name="label"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    disabled={loading}
+                    placeholder="store name"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="grid grid-cols-3 gap-8">
             <FormField
               control={form.control}
-              name="name"
+              name="label"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
@@ -124,7 +154,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ intialData }) => {
             />
           </div>
           <Button disabled={loading} className="ml-auto" type="submit">
-            Save change
+            {action}
           </Button>
         </form>
       </Form>
@@ -138,4 +168,4 @@ const SettingForm: React.FC<SettingFormProps> = ({ intialData }) => {
   );
 };
 
-export default SettingForm;
+export default BillboardForm;
