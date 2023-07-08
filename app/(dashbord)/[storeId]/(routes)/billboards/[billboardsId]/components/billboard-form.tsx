@@ -25,7 +25,7 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { ApiAlert } from "@/components/ui/api-alert";
-import { UseOrgin } from "@/hooks/use-orgin";
+import { useOrgin } from "@/hooks/use-orgin";
 import ImageUpload from "@/components/ui/image-upload";
 
 const formSchema = z.object({
@@ -44,7 +44,7 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ intialData }) => {
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
-  const orgin = UseOrgin();
+  const orgin = useOrgin();
 
   const title = intialData ? "Edit Billboard" : "Create Billboard";
   const description = intialData
@@ -161,11 +161,6 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ intialData }) => {
         </form>
       </Form>
       <Separator />
-      <ApiAlert
-        title="NEXT_PUBLIC_API_URL"
-        variant="public"
-        description={`${origin}/api/${params.storeId}`}
-      />
     </>
   );
 };
