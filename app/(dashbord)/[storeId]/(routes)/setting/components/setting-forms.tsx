@@ -25,7 +25,7 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { ApiAlert } from "@/components/ui/api-alert";
-import { UseOrgin } from "@/hooks/use-orgin";
+import { useOrgin } from "@/hooks/use-orgin";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -42,7 +42,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ intialData }) => {
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
-  const orgin = UseOrgin();
+  const orgin = useOrgin();
 
   const form = useForm<SettingFormValues>({
     resolver: zodResolver(formSchema),
@@ -132,7 +132,7 @@ const SettingForm: React.FC<SettingFormProps> = ({ intialData }) => {
       <ApiAlert
         title="NEXT_PUBLIC_API_URL"
         variant="public"
-        description={`${origin}/api/${params.storeId}`}
+        description={`${orgin}/api/${params.storeId}`}
       />
     </>
   );

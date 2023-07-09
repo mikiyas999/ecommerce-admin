@@ -24,8 +24,7 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { AlertModal } from "@/components/modals/alert-modal";
-import { ApiAlert } from "@/components/ui/api-alert";
-import { useOrgin } from "@/hooks/use-orgin";
+
 import ImageUpload from "@/components/ui/image-upload";
 
 const formSchema = z.object({
@@ -44,7 +43,6 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ intialData }) => {
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
-  const orgin = useOrgin();
 
   const title = intialData ? "Edit Billboard" : "Create Billboard";
   const description = intialData
@@ -64,9 +62,17 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ intialData }) => {
   const onSubmit = async (data: BillboardFormValues) => {
     try {
       setLoading(true);
-      await axios.patch(`/api/stores/${params.storeId}`, data);
-      toast.success("store updated");
+      if (intialData) {
+        await axios.patch(
+          `/api/${params.storeId}/billboards/${params.billboardsId}`,
+          data
+        );
+      } else {
+        await axios.post(`/api/${params.storeId}/billboards`, data);
+      }
       router.refresh();
+      router.push(`/${params.storeId}/billboards`);
+      toast.success(toastMessage);
     } catch (error) {
       toast.error("something went wrong");
     } finally {
@@ -77,9 +83,11 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ intialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/stores/${params.storeId}`);
+      await axios.delete(
+        `/api/${params.storeId}/billboards/${params.billboardId}`
+      );
       router.refresh();
-      router.push("/");
+      router.push(`/${params.storeId}/billboards`);
       toast.success("Deleted successfully");
     } catch (error) {
       toast.error("Make sure you removed all products and categories first.");
