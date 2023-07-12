@@ -31,7 +31,7 @@ export const StoreModal = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const StoreModal = useStoreModal();
+  const storeModal = useStoreModal();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -50,9 +50,9 @@ export const StoreModal = () => {
   return (
     <Modal
       title="Create store"
-      description="Add a new store to manage products and categories"
-      isOpen={StoreModal.isOpen}
-      onClose={() => StoreModal.onClose}
+      description="Add a new store to manage products and categories."
+      isOpen={storeModal.isOpen}
+      onClose={storeModal.onClose}
     >
       <div>
         <div className="space-y-4 py-2 pb-4">
@@ -64,23 +64,23 @@ export const StoreModal = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel> Name </FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="create store"
-                          {...field}
                           disabled={loading}
+                          placeholder="E-Commerce"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <div className="flex items-center justify-end pt-6 space-x-2 w-full">
+                <div className="pt-6 space-x-2 flex items-center justify-end w-full">
                   <Button
                     disabled={loading}
                     variant="outline"
-                    onClick={StoreModal.onClose}
+                    onClick={storeModal.onClose}
                   >
                     Cancel
                   </Button>
